@@ -60,10 +60,19 @@ sample.names <- c("S01783", "S01780", "S01781", "S01778", "S01779",
 pca_plot(results, overlaid.info, sample.names)
 
 ## -----------------------------------------------------------------------------
-heatmap_plot(results)
+show_comparisons(results)
 
 ## -----------------------------------------------------------------------------
-heatmap_plot(results, heatmap.peak.count = 200, cluster_cols = F)
+heatmap_differential(results, comparison = "B6_NZO")
+
+## -----------------------------------------------------------------------------
+heatmap_differential(results, comparison = "B6_NZO", show_colnames = FALSE)
+
+## -----------------------------------------------------------------------------
+heatmap_var_peaks(results)
+
+## -----------------------------------------------------------------------------
+heatmap_var_peaks(results, heatmap.peak.count = 200, cluster_cols = F)
 
 ## -----------------------------------------------------------------------------
 dot_plot(results)
@@ -73,8 +82,11 @@ dot_plot(results, filter.pathways = T)
 
 ## -----------------------------------------------------------------------------
 contrasts <- sapply(strsplit(colnames(bed), split = "-", fixed = T), 
-                    function(x){paste(x[1:4], collapse = "-")})[4:25]
+                    function(x){paste(x[1:4], collapse = ".")})[4:25]
 unique(contrasts)
+
+## ----eval=FALSE---------------------------------------------------------------
+#  cinaR(matrix = count.matrix, ..., experiment.type = "RNA-Seq")
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  cinaR(..., geneset = new_geneset)
@@ -122,4 +134,7 @@ unique(contrasts)
 #  
 #  # change cut-off value for dot plots
 #  dot_plot(..., fdr.cutoff = 0.05)
+
+## ----session Info-------------------------------------------------------------
+sessionInfo()
 

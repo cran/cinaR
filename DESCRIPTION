@@ -1,7 +1,7 @@
 Package: cinaR
 Type: Package
 Title: A Computational Pipeline for Bulk 'ATAC-Seq' Profiles
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     c(person(given = "Onur",
              family = "Karakaslar",
@@ -32,9 +32,9 @@ RoxygenNote: 7.1.1
 Suggests: biomaRt, knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2020-11-09 23:40:02 UTC; karako
+Packaged: 2021-01-05 20:30:01 UTC; karako
 Author: Onur Karakaslar [aut, cre],
   Duygu Ucar [aut] (<https://orcid.org/0000-0002-9772-3066>)
 Maintainer: Onur Karakaslar <eonurkara@gmail.com>
 Repository: CRAN
-Date/Publication: 2020-11-14 08:30:05 UTC
+Date/Publication: 2021-01-05 21:30:02 UTC

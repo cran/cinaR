@@ -181,7 +181,7 @@ pca_plot <- function(results, overlaid.info, sample.names = NULL, show.names = T
   return(plot.pca)
 }
 
-#' heatmap_plot
+#' heatmap_var_peaks
 #'
 #' plot most variable k peaks (default k = 100) among all samples
 #'
@@ -198,10 +198,10 @@ pca_plot <- function(results, overlaid.info, sample.names = NULL, show.names = T
 #' results <- NULL
 #' results[["cp"]] <- bed[,c(4:25)]
 #'
-#' heatmap_plot(results)
+#' heatmap_var_peaks(results)
 #'
 #' @export
-heatmap_plot <- function(results, heatmap.peak.count = 100, ...){
+heatmap_var_peaks <- function(results, heatmap.peak.count = 100, ...){
 
   # if enrichment not run!
   if(!is.null(results[["cp"]])){
@@ -216,14 +216,8 @@ heatmap_plot <- function(results, heatmap.peak.count = 100, ...){
   # reorder peak according to their standard deviation in decreasing order
   cp <- cp [rev(order(apply(cp, 1, stats::sd))),]
 
-  # pheatmap normalization function
-  scale_rows <- function(x){
-    m = apply(x, 1, mean, na.rm = TRUE)
-    s = apply(x, 1, stats::sd, na.rm = TRUE)
-    return((x - m) / s)
-  }
-
   # normalize peak distributions
+  # utils function
   mat.heatmap <- scale_rows(cp)
 
   mat.heatmap <- mat.heatmap[1:min(nrow(cp),heatmap.peak.count),]
@@ -233,6 +227,70 @@ heatmap_plot <- function(results, heatmap.peak.count = 100, ...){
                      color = grDevices::colorRampPalette(rev(RColorBrewer::brewer.pal(n=7,"RdBu")))(length(breaksList)),
                      show_rownames = FALSE,
                      ... = ...)
+  return(plot.pheatmap)
+}
+
+
+#' heatmap_differential
+#'
+#' plot differentially accessible peaks for a given comparison
+#'
+#' @param results cinaR result object
+#' @param comparison these are created by cinaR from `contrasts` user provided. If not selected the first comparison will be shown!
+#' @param ... additional arguments for heatmap function, for more info `?pheatmap`
+#' @return ggplot object
+#' @examples
+#' \donttest{
+#' library(cinaR)
+#' data(atac_seq_consensus_bm) # calls 'bed'
+#'
+#' # a vector for comparing the examples
+#' contrasts <- sapply(strsplit(colnames(bed), split = "-", fixed = TRUE),
+#'                     function(x){x[1]})[4:25]
+#'
+#' results <- cinaR(bed, contrasts, reference.genome = "mm10")
+#'
+#' heatmap_differential(results)
+#' }
+#' @export
+heatmap_differential <- function(results, comparison = NULL, ...){
+
+  available.comparisons <- show_comparisons(results)
+
+  if(is.null(comparison)){
+    comparison <- available.comparisons[1]
+    warning(paste0("'comparison' is not set so '", comparison, "' will be used!"))
+  } else {
+    # check if the comparison is available
+    if(!comparison %in% available.comparisons){
+      stop("'comparison' is not available. Please select one of these:\n",
+           paste0("[",c(1:length(available.comparisons)),"] ", available.comparisons,collapse = "\n"))
+    }
+  }
+
+  # if enrichment not run!
+  if(!is.null(results[["cp"]])){
+    cp <- results[["cp"]]
+    da.peaks <- results$DA.peaks[[comparison]]
+  } else { # if run
+    cp <- results[["DA.results"]][["cp"]]
+    da.peaks <- results$DA.results$DA.peaks[[comparison]]
+  }
+
+  cp <- stats::na.omit(cp)
+
+  # select the peaks from contrast
+  cp <- cp[da.peaks$Row.names,]
+
+  # normalize peak distributions
+  # utils function
+  mat.heatmap <- scale_rows(cp)
+
+  breaksList <- seq(min(mat.heatmap), max(mat.heatmap), by = .01)
+  plot.pheatmap <- pheatmap::pheatmap(mat.heatmap, scale = "none",
+                                      color = grDevices::colorRampPalette(rev(RColorBrewer::brewer.pal(n=7,"RdBu")))(length(breaksList)),
+                                      show_rownames = FALSE,
+                                      ... = ...)
   return(plot.pheatmap)
 }
 

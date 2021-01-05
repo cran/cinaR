@@ -110,16 +110,34 @@ pca_plot(results, overlaid.info, sample.names)
 
 ### Heatmaps
 
+
+#### Differential peaks
+
+You can see the available comparisons using:
+```{r}
+show_comparisons(results)
+```
+
+Then, plot the differential peaks for a selected contrast using:
+```{r}
+heatmap_differential(results, comparison = "B6_NZO")
+```
+  
+Also, you can configure your heatmaps using the additional arguments of `pheatmap` function. For more information check out `?pheatmap`.
+```{r}
+heatmap_differential(results, comparison = "B6_NZO", show_colnames = FALSE)
+```
+
+#### Most variable peaks
 You can also plot most variable 100 peaks for all samples:
 ```{r}
-heatmap_plot(results)
+heatmap_var_peaks(results)
 ```
 
-Plus, you can set the number of peaks to be used in these plots, and also you can change the additional arguments of `pheatmap` function. For more information check out `?pheatmap`.
+Plus, you can set the number of peaks to be used in these plots, and again you can change the additional arguments of `pheatmap` function. For more information check out `?pheatmap`.
 ```{r}
-heatmap_plot(results, heatmap.peak.count = 200, cluster_cols = F)
+heatmap_var_peaks(results, heatmap.peak.count = 200, cluster_cols = F)
 ```
-
 
 ### Enrichment Plots
 You can plot your enrichment results using:
@@ -132,18 +150,29 @@ if it gets too crowded, you can get rid of the irrelevant pathways as well:
 dot_plot(results, filter.pathways = T)
 ```
 
-
 ## Creating different contrasts
 
 Note that you can further divide the resolution of contrasts, for instance this
 is also a valid vector
 ```{r}
 contrasts <- sapply(strsplit(colnames(bed), split = "-", fixed = T), 
-                    function(x){paste(x[1:4], collapse = "-")})[4:25]
+                    function(x){paste(x[1:4], collapse = ".")})[4:25]
 unique(contrasts)
 ```
 in this case, each of them will be compared to each other which will result in
 28 different comparisons.
+
+## Running for bulk RNA-seq data
+
+To run `cinaR` with RNA-seq experiments, just provide the count matrix, and specify the experiment type:
+```{r eval=FALSE}
+cinaR(matrix = count.matrix, ..., experiment.type = "RNA-Seq")
+```
+
+Note that, `count.matrix` should be in the form of $g \times (1+n)$ where $g$ is the number of genes and $n$ is the number of samples, and plus one is for gene names.
+
+> Note that currently `cinaR` can only handle gene symbols (e.g. FOSL2, FOXA) and ensembl stable IDs (e.g. ENSG00000010404) for both human and mice!
+
 
 ## Running enrichment with different dataset
 You can run the enrichment analyses with a custom geneset:
@@ -258,3 +287,9 @@ dot_plot(..., fdr.cutoff = 0.05)
 - Ritchie ME, Phipson B, Wu D, Hu Y, Law CW, Shi W, Smyth GK (2015). “limma powers differential expression analyses for RNA-sequencing and microarray studies.” Nucleic Acids Research, 43(7), e47.
 
 - Love, M.I., Huber, W., Anders, S. (2014) Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biology, 15:550. 10.1186/s13059-014-0550-8
+
+
+```{r session Info}
+sessionInfo()
+```
+
