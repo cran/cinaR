@@ -99,7 +99,14 @@ unique(contrasts)
 #  cinaR(..., batch.correction = T)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  # batch information should be number a vector where
+#  # runs SVA
+#  cinaR(..., batch.correction = T)
+#  
+#  # runs SVA with 2 surrogate variables
+#  cinaR(..., batch.correction = T, sv.number = 2)
+#  
+#  # adds only batch information to the design matrix! (does not run SVA)
+#  # batch.information should be number a vector where
 #  # the length of it equals to the number of samples.
 #  cinaR(..., batch.correction = T, batch.information = c(rep(0, 11), rep(1,11)))
 

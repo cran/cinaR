@@ -1,13 +1,15 @@
 
 #' HPEA
 #'
+#' Hyper-geometric p-value enrichment analyses, looking for over-representation of a set of genes on given pathways.
+#'
 #' @param genes DA gene names to be checked if they are over-represented or not.
 #' @param background.genes.size number of background genes for hyper-geometric p-value
 #' calculations. Default is 20,000.
 #' @param geneset Pathways to be used in enrichment analyses. If not set vp2008 (Chaussabel, 2008)
 #' immune modules will be used. This can be set to any geneset using `read.gmt` function from `qusage`
 #' package. Different modules are available: https://www.gsea-msigdb.org/gsea/downloads.jsp.
-#'
+#' @return data.frame, list of pathways and their enrichment (adjusted) p-values.
 #' @examples
 #' \donttest{
 #' library(cinaR)
@@ -72,13 +74,15 @@ HPEA <- function(genes, geneset, background.genes.size) {
 
 
 #' GSEA
-#' Having run the differential analyses this function runs geneset enrihment analyses with
-#' `fgsea` package.
+#'
+#' Gene set enrichment analyses, runs 'fgsea' package implementation with preset values.
 #'
 #' @param genes DA gene names to be checked if they are over-represented or not.
 #' @param geneset Pathways to be used in enrichment analyses. If not set vp2008 (Chaussabel, 2008)
 #' immune modules will be used. This can be set to any geneset using `read.gmt` function from `qusage`
 #' package. Different modules are available: https://www.gsea-msigdb.org/gsea/downloads.jsp.
+#' @return data.frame, list of pathways and their enrichment (adjusted) p-values.
+#'
 #' @examples
 #' \donttest{
 #' library(cinaR)
@@ -122,6 +126,8 @@ GSEA <- function(genes, geneset) {
 #' @param geneset Pathways to be used in enrichment analyses. If not set vp2008 (Chaussabel, 2008)
 #' immune modules will be used. This can be set to any geneset using `read.gmt` function from `qusage`
 #' package. Different modules are available: https://www.gsea-msigdb.org/gsea/downloads.jsp.
+#' @param verbose prints messages through running the pipeline
+#' @return list, enrichment analyses results along with corresponding differential analyses outcomes
 #'
 #' @examples
 #' \donttest{
@@ -144,20 +150,25 @@ run_enrichment <- function (
   reference.genome = NULL,
   enrichment.method = NULL,
   enrichment.FDR.cutoff = 1,
-  background.genes.size = 20e3
+  background.genes.size = 20e3,
+  verbose = TRUE
 ) {
+
+
+  # Printing function
+  verbosePrint <- verboseFn(verbose)
 
   # adjustment due to change in pipeline
   results <- results[["DA.peaks"]]
 
   # If no geneset is specified use VP2008
   if (is.null(geneset)) {
-    message(">> No `geneset` is specified so immune modules (Chaussabel, 2008) will be used!")
+    verbosePrint(">> No `geneset` is specified so immune modules (Chaussabel, 2008) will be used!")
     geneset <- cinaR::vp2008
   }
 
   if (is.null(enrichment.method)) {
-    message(">> enrichment.method` is not selected. Hyper-geometric p-value (HPEA) will be used!")
+    verbosePrint(">> enrichment.method` is not selected. Hyper-geometric p-value (HPEA) will be used!")
     enrichment.method <- "HPEA"
   }
 
@@ -174,7 +185,7 @@ run_enrichment <- function (
         mapped.genes <- mice2humanMap[, "HGNC.symbol"][m]
 
         x[, "gene_name"] <- mapped.genes
-        message(">> Mice ensembl ids are converted to human symbols!")
+        verbosePrint(">> Mice ensembl ids are converted to human symbols!")
         return(x)
       })
 
@@ -194,7 +205,7 @@ run_enrichment <- function (
         return(x)
       })
 
-      message(">> Mice gene symbols are converted to human symbols!")
+      verbosePrint(">> Mice gene symbols are converted to human symbols!")
     }
 
 
@@ -213,7 +224,7 @@ run_enrichment <- function (
         }
         return(x)
       })
-      message(">> Human ensembl ids are converted to symbols...")
+      verbosePrint(">> Human ensembl ids are converted to symbols...")
     }
   } else if (reference.genome == "hg19" & experiment.type == "RNA-Seq"){
     ens2gene <- cinaR::grch37
@@ -225,7 +236,7 @@ run_enrichment <- function (
         x[, "gene_name"] <- mapped.genes
         return(x)
       })
-      message(">> Human ensembl ids are converted to symbols...")
+      verbosePrint(">> Human ensembl ids are converted to symbols...")
     }
   }
 

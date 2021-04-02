@@ -1,13 +1,13 @@
 ---
 title: "Introduction to cinaR"
-author: "E Onur Karakaslar"
+author: "[E Onur Karakaslar](https://eonurk.github.io)"
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
 output:
   rmarkdown::html_document:
     highlight: pygments
-    toc: true
-    fig_width: 5
-
+    toc: true 
+    fig_width: 5 
+    
 vignette: >
   %\VignetteIndexEntry{cinaR}
   %\VignetteEngine{knitr::rmarkdown}
@@ -49,7 +49,7 @@ contrasts<- c("B6", "B6", "B6", "B6", "B6", "NZO", "NZO", "NZO", "NZO", "NZO", "
 ```
 
 `cinaR` function directly computes the differentially accessible peaks.
-```{r }
+```{r}
 # If reference genome is not set hg38 will be used!
 results <- cinaR(bed, contrasts, reference.genome = "mm10")
 ```
@@ -57,7 +57,7 @@ results <- cinaR(bed, contrasts, reference.genome = "mm10")
 Now, you can access differential accessibility (DA) and enrichment results.
 ```{r}
 names(results)
-````
+```
 
 Inside `DA.results`, you have the consensus peaks (cp) and differentially accessible (DA) peaks.
 If batch correction was run, then `cp` will be a batch-corrected consensus matrix, otherwise it is the filtered and normalized version of original consensus peaks you provided.
@@ -175,21 +175,31 @@ Note that, `count.matrix` should be in the form of $g \times (1+n)$ where $g$ is
 
 
 ## Running enrichment with different dataset
-You can run the enrichment analyses with a custom geneset:
+You can run the enrichment analyses with a custom gene set:
 ```{r eval=FALSE}
 cinaR(..., geneset = new_geneset)
 ```
 
-`geneset` must be a `.gmt` formatted symbol file. You can download different genesets from this [site](https://www.gsea-msigdb.org/gsea/downloads.jsp). 
+#### `cinaRgenesets`
+Easiest way to do this is to use [cinaRgenesets](https://github.com/eonurk/cinaR-genesets) package. 
+You can select your gene set of interest and just plug it into your pipeline.
 
-> You can use `read.gmt` function from `qusage` package to read genesets into your current environment.
+#### MSigDB
+You can also download different gene sets from [MSigDB site](https://www.gsea-msigdb.org/gsea/downloads.jsp). 
+Note that you should use the human gene symbol versions. 
 
-Also, you can familarize yourself with the format by checking out :
+> You can use `read.gmt` function from `qusage` package to read these genesets into your current environment.
+
+#### Custom gene sets
+
+A `geneset` must be a `.gmt` formatted symbol file.  
+You can familiarize yourself with the format by checking out :
 ```{r eval=FALSE}
 # default geneset to be used
 data("VP2008")
 ```
 
+> If you have gene and pathway names in a `data.frame`, you can use `split` function to create your own `.gmt` formatted gene sets e.g. `split(df$genes, df$pathways)`.
 
 ## Selecting different reference genomes
 For now, `cinaR` supports 3 genomes for human and mice models:
@@ -206,13 +216,21 @@ If you suspect your data have unknown batch effects, you can use:
 cinaR(..., batch.correction = T)
 ```
 This option will run [Surrogate Variable Analysis](http://bioconductor.org/packages/release/bioc/html/sva.html) (SVA) and try to
-adjust your data for unknown batch effects. If however, you already know the batches of the samples, you can simply set the `batch.information` argument as well:
+adjust your data for unknown batch effects. If however, you already know the batches of the samples, you can simply set the `batch.information` argument as well. This will not run the SVA but just add the batches to design matrix.
 
 ```{r eval=FALSE}
-# batch information should be number a vector where
+# runs SVA
+cinaR(..., batch.correction = T)
+
+# runs SVA with 2 surrogate variables
+cinaR(..., batch.correction = T, sv.number = 2)
+
+# adds only batch information to the design matrix! (does not run SVA)
+# batch.information should be number a vector where
 # the length of it equals to the number of samples.
 cinaR(..., batch.correction = T, batch.information = c(rep(0, 11), rep(1,11)))
 ```
+
 > Reminder - In our example data we have 22 samples
   
   
@@ -289,6 +307,7 @@ dot_plot(..., fdr.cutoff = 0.05)
 - Love, M.I., Huber, W., Anders, S. (2014) Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biology, 15:550. 10.1186/s13059-014-0550-8
 
 
+## Session Info
 ```{r session Info}
 sessionInfo()
 ```

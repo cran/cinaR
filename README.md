@@ -21,21 +21,26 @@ download](https://cranlogs.r-pkg.org/badges/cinaR?color=orange)](https://cran.r-
 analyses of bulk ATAC-seq (or RNA-seq) profiles. Starting from a
 consensus peak file, it outputs differentially accessible peaks,
 enrichment results, and provides users with various configurable
-visualization options.
+visualization options. For more details, please see the
+[preprint](https://www.biorxiv.org/content/10.1101/2021.03.05.434143v2).
 
-![<a href="https://eonurk.github.io/cinaR/articles/cinaR.html" class="uri">https://eonurk.github.io/cinaR/articles/cinaR.html</a>](man/figures/overview@5x.png)
+![<https://eonurk.github.io/cinaR/articles/cinaR.html>](man/figures/overview@5x.png)
 
 ## Installation
 
-    # CRAN mirror
-    install.packages("cinaR")
+``` r
+# CRAN mirror
+install.packages("cinaR")
+```
 
 ### Development version
 
 To get bug fix and use a feature from the development version:
 
-    # install.packages("devtools")
-    devtools::install_github("eonurk/cinaR")
+``` r
+# install.packages("devtools")
+devtools::install_github("eonurk/cinaR")
+```
 
 ### Known Installation Issues
 
@@ -43,7 +48,9 @@ Sometimes bioconductor related packages may not be installed
 automatically.  
 Therefore, you may need to install them manually:
 
-    BiocManager::install(c("ChIPseeker", "DESeq2", "edgeR", "fgsea","GenomicRanges", "limma", "preprocessCore", "TxDb.Hsapiens.UCSC.hg38.knownGene", "TxDb.Hsapiens.UCSC.hg19.knownGene", "TxDb.Mmusculus.UCSC.mm10.knownGene"))
+``` r
+BiocManager::install(c("ChIPseeker", "DESeq2", "edgeR", "fgsea","GenomicRanges", "limma", "preprocessCore", "sva", "TxDb.Hsapiens.UCSC.hg38.knownGene", "TxDb.Hsapiens.UCSC.hg19.knownGene", "TxDb.Mmusculus.UCSC.mm10.knownGene"))
+```
 
 ## Contribution
 
@@ -51,8 +58,8 @@ You can send pull requests to make your contributions.
 
 ## Author
 
--   [E Onur Karakaslar](https://eonurk.github.io/)
+  - [E Onur Karakaslar](https://eonurk.github.io/)
 
 ## License
 
--   GNU General Public License v3.0
+  - GNU General Public License v3.0
